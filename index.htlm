@@ -1,0 +1,84 @@
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RoyalMint Wallet</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
+</head>
+<body>
+  <h2>RoyalMint Wallet</h2>
+
+  <button onclick="connect()">🔗 Conectar Carteira</button>
+  <p id="wallet">Carteira: Não conectada</p>
+
+  <button onclick="getBalance()">💰 Ver Saldo ROYAL</button>
+  <p id="balance">Saldo: </p>
+
+  <h3>Enviar ROYAL</h3>
+  <input id="to" placeholder="Endereço destino" style="width: 300px;"><br><br>
+  <input id="amount" placeholder="Quantia" type="number"><br><br>
+  <button onclick="sendToken()">🚀 Enviar</button>
+  <p id="status"></p>
+
+  <script>
+    const tokenAddress =0x1dfa0a897C85FE499752C24231dF2801BcD7d150; // substitui aqui!
+    const tokenABI = [
+      {
+        "constant": true,
+        "inputs": [{"name": "","type": "address"}],
+        "name": "balanceOf",
+        "outputs": [{"name":"","type":"uint256"}],
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {"name":"_to","type":"address"},
+          {"name":"_value","type":"uint256"}
+        ],
+        "name":"transfer",
+      document.getElementById("status").innerText = "❌ Erro: " + e.message;
+      }
+    }
+  </script>
+</body>
+    "outputs":[{"name":"","type":"bool"}],
+        "type":"function"
+      }
+    ];
+
+    let web3;
+    let account;
+    let contract;
+
+    async function connect() {
+      if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
+        await window.ethereum.enable();
+        const accounts = await web3.eth.getAccounts();
+        account = accounts[0];
+        document.getElementById("wallet").innerText = "Carteira: " + account;
+        contract = new web3.eth.Contract(tokenABI, tokenAddress);
+      } else {
+        alert("MetaMask não detectado!");
+      }
+    }
+
+    async function getBalance() {
+      const balance = await contract.methods.balanceOf(account).call();
+      document.getElementById("balance").innerText = "Saldo: " + web3.utils.fromWei(balance) + " ROYAL";
+    }
+
+    async function sendToken() {
+      const to = document.getElementById("to").value;
+      const amount = document.getElementById("amount").value;
+      const value = web3.utils.toWei(amount);
+      document.getElementById("status").innerText = "Enviando...";
+      try {
+        await contract.methods.transfer(to, value).send({ from: account });
+        document.getElementById("status").innerText = "✅ Enviado!";
+        getBalance();
+      } catch (e) {
+</html>
+```
